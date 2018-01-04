@@ -226,13 +226,13 @@ if (Platform.OS !== 'web' as any) {
                     progresses[index] = progress;
                     this.setState({ progresses: progresses });
                 }).then((res: any) => {
-     //将图片缓存路径写入配置
-    this.saveImageCachePath(image.url, res.path, (error) => {
-         if (null != error) {
-             //配置保存完之后对缓存进行更新
-             this.cachedImageUrls[index].url = res.path();
-         }
-     });
+                    //将图片缓存路径写入配置
+                    this.saveImageCachePath(image.url, res.path, (error) => {
+                        if (null != error) {
+                            //配置保存完之后对缓存进行更新
+                            this.cachedImageUrls[index].url = res.path();
+                        }
+                    });
 
                     image.url = res.path();
                     Image.prefetch(image.url).then(() => { }).catch(() => { });

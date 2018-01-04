@@ -2,13 +2,16 @@
 【image-viewer.type.ts】
 1.添加结构
 --------------------------------------------------------------------------------
+```typescript
 export interface Progress {
     received: number
     total: number
 }
+```
 --------------------------------------------------------------------------------
 2.修改结构StateDefine，添加属性
 --------------------------------------------------------------------------------
+```typescript
    /**
      * 图片信息（被缓存则来自于本地）
      */
@@ -17,12 +20,14 @@ export interface Progress {
      * 下载进度内容
      */
     progresses?: Array<Progress>
+ ```
 --------------------------------------------------------------------------------
 
 
 【image-viewer.component.tsx】
 1.修改文件中的init函数添加下载进度state，为进度条做准备
 --------------------------------------------------------------------------------
+```typescript
 // 给 imageSizes 塞入空数组
         const imageSizes: Array<typings.ImageSize> = [];
         const progresses: Array<typings.Progress> = [];
@@ -43,9 +48,11 @@ export interface Progress {
             imageSizes,
             progresses
         }
+```
 --------------------------------------------------------------------------------
 2.在loadImage函数上方添加生成guid的函数
 --------------------------------------------------------------------------------
+```typescript
     //生成随机ID：GUID
     GUID(){
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -54,9 +61,11 @@ export interface Progress {
             return v.toString(16);
         }).toUpperCase();
     }
+```
 --------------------------------------------------------------------------------
 3.添加保存与获取缓存配置的信息
 --------------------------------------------------------------------------------
+```typescript
     //存储文件缓存信息
     saveImageCachePath(url: string, localPath: string,callback?: (error?:Error) => void) {
         AsyncStorage.getItem('imageCache').then((result: string)=>{
@@ -86,13 +95,17 @@ export interface Progress {
             callback(null);
         });
     }
+```
 --------------------------------------------------------------------------------
 4.重新定义私有属性对url进行缓存处理
 --------------------------------------------------------------------------------
+```typescript
     private cachedImageUrls = new Array();
+```
 --------------------------------------------------------------------------------
 5.修改componentWillReceiveProps函数，在loadImage之前实现对图片url进行处理
 --------------------------------------------------------------------------------
+```typescript
 componentWillReceiveProps(nextProps: typings.PropsDefine) {
         if (nextProps.index !== this.state.currentShowIndex) {
             this.setState({
@@ -125,9 +138,11 @@ componentWillReceiveProps(nextProps: typings.PropsDefine) {
             });
         }
     }
+```
 --------------------------------------------------------------------------------
 6.对init函数进行处理，内容与前一步相同
 --------------------------------------------------------------------------------
+```typescript
 this.setState({
             currentShowIndex: nextProps.index,
             imageSizes,
@@ -157,10 +172,12 @@ this.setState({
                 this.setState({ cachedImageUrls: this.cachedImageUrls });
             })
         })
+```
 --------------------------------------------------------------------------------
 7.修改文件中的loadImage函数修改下载，为进度条以及完成后对图片路径的缓存做准备，由于改动较大，所以列出改动前与改动后的内容变更
 《改动前》
 --------------------------------------------------------------------------------
+```typescript
 if (Platform.OS !== 'web' as any) {
             const prefetchImagePromise = Image.prefetch(image.url)
             
@@ -184,9 +201,11 @@ if (Platform.OS !== 'web' as any) {
                     saveImageSize();
                 }
             }
+```
 --------------------------------------------------------------------------------
 《改动后》
 --------------------------------------------------------------------------------
+```typescript
 if (Platform.OS !== 'web' as any) {
             //const prefetchImagePromise = Image.prefetch(image.url)
             
@@ -233,9 +252,11 @@ if (Platform.OS !== 'web' as any) {
                     saveImageSize();
                 }
             }
+```
 --------------------------------------------------------------------------------
 8.修改getContent函数，获取image信息时由this.props.imageUrls获取变更为this.cachedImageUrls中获取
 --------------------------------------------------------------------------------
+```typescript
 /**
      * 获得整体内容
      */
@@ -364,11 +385,13 @@ if (Platform.OS !== 'web' as any) {
             </Animated.View>
         )
     }
+```
 --------------------------------------------------------------------------------
 注：对于显示原图的功能插件作者似乎只是显示了按钮并没有完成它，日后如果有需要的话会对插件进行进一步处理以满足需求
 
 9.修改saveToLocal函数，获取image信息时由this.props.imageUrls获取变更为this.cachedImageUrls中获取
 --------------------------------------------------------------------------------
+```typescript
     /**
      * 保存当前图片到本地相册
      */
@@ -384,6 +407,7 @@ if (Platform.OS !== 'web' as any) {
             isShowMenu: false
         })
     }
+```
 --------------------------------------------------------------------------------
 【编译内容】
 改完之后需要编译内容以生效，终端cd到插件目录《项目路径/node_modules/react-native-image-zoom-viewer》并执行yarn进行编译操作，编译完成后重启react-native才可以生效
